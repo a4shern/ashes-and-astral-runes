@@ -1,0 +1,263 @@
+/* ==========================================================================
+   theme.css — 暗黑奇幻、羊皮紙與燙金邊框設計系統
+   ========================================================================== */
+
+:root {
+  /* 暗黑奇幻基底色票 */
+  --bg-abyss: #0a090e;
+  --bg-obsidian: #121018;
+  --bg-panel: #18141f;
+  --bg-panel-elevated: #201b29;
+  --bg-panel-soft: rgba(24, 20, 31, 0.88);
+
+  /* 羊皮紙質感色票（主劇情捲軸） */
+  --parchment-light: #f2e5cb;
+  --parchment-mid: #e8d5b2;
+  --parchment-edge: #d3ba8d;
+  --ink-primary: #251a11;
+  --ink-secondary: #4c3825;
+  --ink-muted: #6e553b;
+
+  /* 燙金與微光色票 */
+  --gold-bright: #f5db92;
+  --gold-primary: #d4aa58;
+  --gold-antique: #9d7732;
+  --gold-dark: #5e4419;
+  --gold-glow: rgba(212, 170, 88, 0.35);
+  --gold-subtle: rgba(212, 170, 88, 0.14);
+
+  /* 文字色票（深色介面） */
+  --text-ivory: #f2ead9;
+  --text-warm: #d4c6ad;
+  --text-muted: #988b78;
+
+  /* 狀態語意色票 */
+  --crimson-bright: #e05252;
+  --crimson-mid: #a82828;
+  --crimson-deep: #4f1215;
+  --emerald-bright: #5ad08e;
+  --emerald-mid: #278856;
+  --emerald-deep: #123c26;
+  --arcane-bright: #7eb6ff;
+  --arcane-mid: #3a6bb5;
+  --abyssal-purple: #b87aff;
+  --amber-warn: #e5a13d;
+
+  /* 字體設定 */
+  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif;
+  --font-sans: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+  --font-display: "Cinzel", "Noto Serif TC", serif;
+
+  /* 圓角與陰影 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-panel: 0 18px 42px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(245, 219, 146, 0.14);
+  --shadow-gold: 0 0 24px rgba(212, 170, 88, 0.22);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background-color: var(--bg-abyss);
+  color: var(--text-ivory);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(157, 119, 50, 0.16), transparent 65%),
+    radial-gradient(ellipse 65% 45% at 12% 85%, rgba(92, 42, 74, 0.16), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 90% 90%, rgba(44, 62, 108, 0.16), transparent 60%),
+    linear-gradient(180deg, #0c0a10 0%, #100d15 55%, #09080c 100%);
+  background-attachment: fixed;
+}
+
+/* 自訂捲軸 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 9, 14, 0.55);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-antique), var(--gold-dark));
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold-primary), var(--gold-antique));
+}
+
+/* 背景微光粒子層 */
+.ambient-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.35;
+}
+
+.ambient-glow-top {
+  width: 520px;
+  height: 320px;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(212, 170, 88, 0.4), transparent 70%);
+}
+
+.ambient-glow-bottom {
+  width: 600px;
+  height: 360px;
+  bottom: -160px;
+  right: -80px;
+  background: radial-gradient(circle, rgba(138, 60, 90, 0.35), transparent 70%);
+}
+
+#ember-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 燙金暗黑奇幻框體 */
+.gilded-frame {
+  position: relative;
+  background:
+    linear-gradient(160deg, rgba(35, 29, 44, 0.94) 0%, rgba(20, 17, 26, 0.96) 55%, rgba(16, 13, 21, 0.98) 100%);
+  border: 1px solid rgba(212, 170, 88, 0.42);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+}
+
+.gilded-frame::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(212, 170, 88, 0.16);
+  border-radius: calc(var(--radius-lg) - 3px);
+  pointer-events: none;
+}
+
+/* 角落燙金花紋 */
+.corner-ornament {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: var(--gold-bright);
+  border-style: solid;
+  pointer-events: none;
+  opacity: 0.78;
+  z-index: 2;
+}
+
+.corner-ornament.tl {
+  top: 7px;
+  left: 7px;
+  border-width: 2px 0 0 2px;
+  border-top-left-radius: 3px;
+}
+
+.corner-ornament.tr {
+  top: 7px;
+  right: 7px;
+  border-width: 2px 2px 0 0;
+  border-top-right-radius: 3px;
+}
+
+.corner-ornament.bl {
+  bottom: 7px;
+  left: 7px;
+  border-width: 0 0 2px 2px;
+  border-bottom-left-radius: 3px;
+}
+
+.corner-ornament.br {
+  bottom: 7px;
+  right: 7px;
+  border-width: 0 2px 2px 0;
+  border-bottom-right-radius: 3px;
+}
+
+/* 羊皮紙主劇情捲軸質感 */
+.parchment-scroll {
+  position: relative;
+  color: var(--ink-primary);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 249, 232, 0.45), transparent 45%),
+    radial-gradient(circle at 85% 88%, rgba(168, 128, 72, 0.22), transparent 50%),
+    linear-gradient(175deg, var(--parchment-light) 0%, var(--parchment-mid) 58%, #e2cca4 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.72),
+    0 0 32px rgba(212, 170, 88, 0.16),
+    inset 0 0 46px rgba(102, 68, 30, 0.28),
+    inset 0 0 0 4px rgba(157, 119, 50, 0.22);
+}
+
+.parchment-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--gold-antique);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.parchment-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.parchment-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+.parchment-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+.parchment-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+/* 燙金分隔線 */
+.gilded-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  color: var(--gold-antique);
+  font-size: 0.85rem;
+}
+
+.gilded-divider::before,
+.gilded-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-antique), transparent);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted-text {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin: 4px 0 0;
+}

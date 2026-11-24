@@ -1,0 +1,245 @@
+/* ==========================================================================
+   layout.css — 頁首、創角介面與三欄式冒險佈局
+   ========================================================================== */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(12, 10, 16, 0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212, 170, 88, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
+.header-inner {
+  max-width: 1460px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-sigil {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: var(--gold-bright);
+  background: radial-gradient(circle, rgba(212, 170, 88, 0.25), rgba(16, 13, 21, 0.9));
+  border: 1px solid rgba(212, 170, 88, 0.65);
+  box-shadow: 0 0 16px rgba(212, 170, 88, 0.28);
+}
+
+.brand-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.32rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  background: linear-gradient(180deg, #fff1c2 0%, var(--gold-primary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-subtitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phase-pill {
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--gold-bright);
+  background: rgba(212, 170, 88, 0.12);
+  border: 1px solid rgba(212, 170, 88, 0.35);
+}
+
+/* ==================== 創角主畫面 ==================== */
+.creator-screen {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 26px auto 44px;
+  padding: 0 20px;
+}
+
+.creator-card {
+  padding: 32px 34px 36px;
+}
+
+.creator-banner {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  color: var(--gold-primary);
+  margin-bottom: 6px;
+}
+
+.creator-banner h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--text-ivory);
+  text-shadow: 0 2px 18px rgba(212, 170, 88, 0.24);
+}
+
+.creator-lead {
+  margin: 8px auto 0;
+  max-width: 620px;
+  color: var(--text-warm);
+  font-size: 0.94rem;
+}
+
+.creator-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.creator-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==================== 三欄式冒險主畫面 ==================== */
+.adventure-screen {
+  position: relative;
+  z-index: 1;
+  max-width: 1460px;
+  margin: 20px auto 34px;
+  padding: 0 20px;
+}
+
+.adventure-grid {
+  display: grid;
+  grid-template-columns: 295px minmax(0, 1fr) 325px;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  padding: 20px;
+}
+
+.sidebar-left {
+  position: sticky;
+  top: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.center-stage {
+  padding: 30px 34px 32px;
+  min-height: calc(100vh - 122px);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-right {
+  position: sticky;
+  top: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: calc(100vh - 98px);
+}
+
+.inventory-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 46vh;
+}
+
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 240px;
+  max-height: 42vh;
+}
+
+/* 響應式適配 */
+@media (max-width: 1180px) {
+  .adventure-grid {
+    grid-template-columns: 260px minmax(0, 1fr) 280px;
+    gap: 16px;
+  }
+
+  .center-stage {
+    padding: 24px 24px 28px;
+  }
+}
+
+@media (max-width: 980px) {
+  .creator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .adventure-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    position: static;
+    max-height: none;
+  }
+
+  .inventory-panel,
+  .log-panel {
+    max-height: 340px;
+  }
+
+  .center-stage {
+    min-height: auto;
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 10px 14px;
+  }
+
+  .creator-card {
+    padding: 22px 16px 26px;
+  }
+
+  .adventure-screen {
+    padding: 0 12px;
+  }
+}

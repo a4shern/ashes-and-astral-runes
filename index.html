@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>灰燼與星紋 — 西幻互動文字冒險</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <!-- 背景微光粒子層 -->
+  <div class="ambient-layer" aria-hidden="true">
+    <div class="ambient-glow ambient-glow-top"></div>
+    <div class="ambient-glow ambient-glow-bottom"></div>
+    <canvas id="ember-canvas"></canvas>
+  </div>
+
+  <!-- 頂部品牌標題列 -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-sigil" aria-hidden="true">✦</span>
+        <div>
+          <h1 class="brand-title">灰燼與星紋</h1>
+          <p class="brand-subtitle">ASHES &amp; ASTRAL RUNES · 西幻 D&amp;D 文字冒險</p>
+        </div>
+      </div>
+      <div class="header-actions" id="header-actions">
+        <span class="phase-pill" id="phase-indicator">創角階段</span>
+        <button type="button" class="btn btn-ghost btn-sm hidden" id="btn-restart-creator">
+          ↺ 重新創角
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 畫面一：創角系統 ==================== -->
+  <main id="creator-screen" class="creator-screen">
+    <div class="gilded-frame creator-card">
+      <div class="corner-ornament tl"></div>
+      <div class="corner-ornament tr"></div>
+      <div class="corner-ornament bl"></div>
+      <div class="corner-ornament br"></div>
+
+      <div class="creator-banner">
+        <span class="eyebrow">CHRONICLE OF CREATION</span>
+        <h2>鑄造你的冒險者傳奇</h2>
+        <p class="creator-lead">以命運之輪決定出身血脈，選擇職業之道，並透過 27 點購點制形塑六大天賦。</p>
+      </div>
+
+      <div class="creator-grid">
+        <!-- 左半：基本資訊、隨機種族、職業 -->
+        <section class="creator-col">
+          <!-- 角色名稱 -->
+          <div class="form-block">
+            <label for="char-name" class="block-label">
+              <span class="label-icon">✒</span> 冒險者姓名
+            </label>
+            <div class="input-row">
+              <input
+                id="char-name"
+                type="text"
+                class="fantasy-input"
+                maxlength="20"
+                placeholder="輸入角色名稱，例如：艾莉亞·晨星"
+                autocomplete="off"
+              />
+              <button type="button" class="btn btn-outline btn-sm" id="btn-random-name" title="隨機產生西幻名稱">
+                🎲 隨機命名
+              </button>
+            </div>
+          </div>
+
+          <!-- 隨機選擇種族 -->
+          <div class="form-block">
+            <div class="block-head">
+              <span class="block-label"><span class="label-icon">🩸</span> 命運種族（機率抽選）</span>
+              <button type="button" class="btn btn-gold btn-sm" id="btn-roll-race">
+                ✦ 命運抽選種族
+              </button>
+            </div>
+
+            <div class="race-odds-bar" aria-label="種族出現機率">
+              <span class="odds-chip odds-common">人類 90%</span>
+              <span class="odds-chip odds-rare">矮人 3%</span>
+              <span class="odds-chip odds-legend">精靈 1%</span>
+              <span class="odds-chip odds-abyss">魔族 1%</span>
+            </div>
+
+            <div class="race-result-card" id="race-result-card">
+              <div class="race-emblem" id="race-emblem">?</div>
+              <div class="race-info">
+                <div class="race-title-row">
+                  <strong id="race-name">尚未抽選</strong>
+                  <span class="rarity-tag" id="race-rarity">點擊上方按鈕抽取</span>
+                </div>
+                <p id="race-desc" class="muted-text">你的血脈將由命運決定，極少數旅人會覺醒稀世血統。</p>
+                <p id="race-trait" class="trait-highlight hidden"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 職業選擇 -->
+          <div class="form-block">
+            <div class="block-head">
+              <span class="block-label"><span class="label-icon">⚔</span> 冒險職業</span>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-random-class">
+                🎲 隨機職業
+              </button>
+            </div>
+            <div class="class-grid" id="class-grid" role="radiogroup" aria-label="選擇職業">
+              <!-- 由 creator.js 動態渲染四大職業卡片 -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 右半：27點購點制 + 預覽摘要 -->
+        <section class="creator-col">
+          <div class="form-block">
+            <div class="block-head">
+              <span class="block-label"><span class="label-icon">⚖</span> 六大屬性 · 27 點購點制</span>
+              <div class="points-badge" id="points-badge">
+                剩餘 <strong id="points-remaining">27</strong> / 27 點
+              </div>
+            </div>
+
+            <div class="point-buy-toolbar">
+              <span class="rule-hint">範圍 8–15（14、15 每升 1 點需消耗 2 點）</span>
+              <div class="toolbar-btns">
+                <button type="button" class="btn btn-ghost btn-xs" id="btn-recommended-stats">依職業推薦</button>
+                <button type="button" class="btn btn-ghost btn-xs" id="btn-random-stats">隨機分配</button>
+                <button type="button" class="btn btn-ghost btn-xs" id="btn-reset-stats">重置</button>
+              </div>
+            </div>
+
+            <div class="stats-allocator" id="stats-allocator">
+              <!-- 由 creator.js 動態渲染 6 大屬性列 -->
+            </div>
+          </div>
+
+          <!-- 即時角色預覽與初始 HP -->
+          <div class="preview-panel">
+            <div class="preview-metrics">
+              <div class="metric-box hp-preview-box">
+                <span class="metric-label">初始生命值 (HP)</span>
+                <strong class="metric-value" id="preview-hp">--</strong>
+                <span class="metric-formula" id="preview-hp-formula">請先選擇職業與種族</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">初始攜帶裝備</span>
+                <ul class="starter-gear-list" id="preview-gear">
+                  <li>選擇職業後顯示初始裝備</li>
+                </ul>
+              </div>
+            </div>
+
+            <p class="validation-msg hidden" id="creator-error"></p>
+
+            <button type="button" class="btn btn-gold btn-lg btn-start" id="btn-start-adventure">
+              <span>踏入鏽錨酒館 · 展開冒險</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== 畫面二：三欄式冒險介面 ==================== -->
+  <main id="adventure-screen" class="adventure-screen hidden">
+    <div class="adventure-grid">
+      <!-- 左欄：角色狀態卡 -->
+      <aside class="panel gilded-frame sidebar-left" aria-label="角色狀態卡">
+        <div class="panel-header">
+          <span class="panel-sigil">❖</span>
+          <h2>角色狀態卡</h2>
+        </div>
+
+        <div class="hero-identity">
+          <div class="hero-crest" id="hud-crest">⚔</div>
+          <div class="hero-meta">
+            <h3 id="hud-name">無名旅人</h3>
+            <div class="hero-tags">
+              <span class="tag tag-race" id="hud-race">人類</span>
+              <span class="tag tag-class" id="hud-class">戰士</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HP 血條 -->
+        <div class="hp-section" id="hud-hp-section">
+          <div class="hp-header">
+            <span class="hp-label">生命值 HP</span>
+            <span class="hp-numbers" id="hud-hp-text">20 / 20</span>
+          </div>
+          <div class="hp-bar-track">
+            <div class="hp-bar-fill" id="hud-hp-bar" style="width: 100%"></div>
+          </div>
+          <div class="hp-float-container" id="hp-float-container"></div>
+        </div>
+
+        <!-- 六大屬性 -->
+        <div class="hud-section">
+          <h4 class="section-subtitle">六大屬性與調整值</h4>
+          <div class="hud-stats-grid" id="hud-stats-grid">
+            <!-- 動態渲染 -->
+          </div>
+        </div>
+
+        <!-- 職業被動與種族天賦 -->
+        <div class="hud-section">
+          <h4 class="section-subtitle">職業被動與血脈天賦</h4>
+          <div class="passive-card" id="hud-class-passive">
+            <!-- 動態渲染 -->
+          </div>
+          <div class="passive-card passive-race" id="hud-race-passive">
+            <!-- 動態渲染 -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- 中欄：羊皮紙主劇情區與互動選項區 -->
+      <section class="panel parchment-scroll center-stage" aria-label="主劇情與互動選項">
+        <div class="parchment-corner tl"></div>
+        <div class="parchment-corner tr"></div>
+        <div class="parchment-corner bl"></div>
+        <div class="parchment-corner br"></div>
+
+        <div class="scene-header">
+          <div class="scene-chapter-row">
+            <span class="chapter-badge" id="scene-chapter">第一章 · 鏽錨酒館</span>
+            <span class="location-tag" id="scene-location">📍 灰燼鎮酒館</span>
+          </div>
+          <h2 class="scene-title" id="scene-title">載入劇本中...</h2>
+          <div class="gilded-divider"><span>✦</span></div>
+        </div>
+
+        <!-- 上一步結果橫幅 -->
+        <div class="outcome-banner hidden" id="outcome-banner"></div>
+
+        <!-- 劇本線索提示條（若解鎖） -->
+        <div class="clue-banner hidden" id="clue-banner"></div>
+
+        <!-- 劇情敘述區 -->
+        <article class="story-body" id="story-body">
+          <!-- 動態渲染段落 -->
+        </article>
+
+        <!-- 互動選項區 -->
+        <div class="choices-section">
+          <div class="choices-heading">
+            <span class="choices-line"></span>
+            <span id="choices-label">抉擇時刻</span>
+            <span class="choices-line"></span>
+          </div>
+          <div class="choices-list" id="choices-list">
+            <!-- 動態渲染互動按鈕 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 右欄：背包物品欄 & 冒險日誌 -->
+      <aside class="sidebar-right" aria-label="背包與冒險日誌">
+        <!-- 背包面板 -->
+        <section class="panel gilded-frame inventory-panel">
+          <div class="panel-header">
+            <span class="panel-sigil">🎒</span>
+            <h2>背包物品欄</h2>
+            <span class="count-pill" id="inv-count">0</span>
+          </div>
+          <div class="inventory-list" id="inventory-list">
+            <!-- 動態渲染道具與藥水使用按鈕 -->
+          </div>
+        </section>
+
+        <!-- 冒險日誌面板 -->
+        <section class="panel gilded-frame log-panel">
+          <div class="panel-header">
+            <span class="panel-sigil">📜</span>
+            <h2>冒險日誌</h2>
+          </div>
+          <div class="log-list" id="adventure-log">
+            <!-- 動態渲染事件記錄 -->
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ==================== 1d100 檢定擲骰彈窗 ==================== -->
+  <div class="modal-backdrop hidden" id="dice-modal" role="dialog" aria-modal="true" aria-labelledby="dice-modal-title">
+    <div class="gilded-frame dice-modal-card" id="dice-modal-card">
+      <div class="corner-ornament tl"></div>
+      <div class="corner-ornament tr"></div>
+      <div class="corner-ornament bl"></div>
+      <div class="corner-ornament br"></div>
+
+      <div class="dice-header">
+        <span class="dice-eyebrow">FATE CHECK · 1d100 檢定</span>
+        <h3 id="dice-modal-title">魅力檢定</h3>
+        <p class="dice-dc-target" id="dice-dc-target">難度目標 DC 45</p>
+      </div>
+
+      <div class="dice-stage">
+        <div class="dice-aura" id="dice-aura"></div>
+        <div class="dice-polyhedron" id="dice-polyhedron">
+          <svg class="dice-svg" viewBox="0 0 120 120" aria-hidden="true">
+            <polygon points="60,6 108,34 108,86 60,114 12,86 12,34" class="dice-outer" />
+            <polygon points="60,16 98,39 98,81 60,104 22,81 22,39" class="dice-inner" />
+          </svg>
+          <span class="dice-number" id="dice-number">00</span>
+        </div>
+        <span class="dice-sub-label" id="dice-sub-label">命運之骰轉動中...</span>
+      </div>
+
+      <div class="dice-breakdown hidden" id="dice-breakdown">
+        <div class="calc-row">
+          <span>1d100 骰面</span>
+          <strong id="calc-roll">0</strong>
+        </div>
+        <div class="calc-row">
+          <span id="calc-stat-label">屬性調整值</span>
+          <strong id="calc-stat-mod">+0</strong>
+        </div>
+        <div class="calc-row hidden" id="calc-bonus-row">
+          <span id="calc-bonus-label">額外加值</span>
+          <strong id="calc-bonus-val">+0</strong>
+        </div>
+        <div class="calc-divider"></div>
+        <div class="calc-row calc-total-row">
+          <span>檢定總和 vs <em id="calc-dc">DC 45</em></span>
+          <strong id="calc-total">0</strong>
+        </div>
+      </div>
+
+      <div class="dice-verdict hidden" id="dice-verdict">
+        <div class="verdict-badge" id="verdict-badge">成功</div>
+        <p class="verdict-desc" id="verdict-desc"></p>
+      </div>
+
+      <button type="button" class="btn btn-gold btn-lg hidden" id="btn-dice-confirm">
+        推進劇情 →
+      </button>
+    </div>
+  </div>
+
+  <!-- 輕量提示吐司 -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
